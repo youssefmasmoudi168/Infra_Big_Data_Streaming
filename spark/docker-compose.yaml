@@ -1,0 +1,72 @@
+services:
+
+  spark-master:
+    build: .
+    container_name: spark-master
+    hostname: spark-master
+    environment:
+      - SPARK_NO_DAEMONIZE=true
+    command: /opt/spark/bin/spark-class org.apache.spark.deploy.master.Master
+    ports:
+      - "8080:8080"
+      - "7077:7077"
+    volumes:
+      - ./conf/spark-defaults.conf:/opt/spark/conf/spark-defaults.conf
+      - ./spark-apps:/opt/spark/spark-apps
+    networks:
+      - minio_lake_net
+
+  spark-worker-1:
+    build: .
+    container_name: spark-worker-1
+    environment:
+      - SPARK_NO_DAEMONIZE=true
+      - SPARK_WORKER_CORES=3
+      - SPARK_WORKER_MEMORY=4G
+    command: /opt/spark/bin/spark-class org.apache.spark.deploy.worker.Worker spark://spark-master:7077
+    depends_on:
+      - spark-master
+    ports:
+      - "8082:8081"
+    volumes:
+      - ./conf/spark-defaults.conf:/opt/spark/conf/spark-defaults.conf
+    networks:
+      - minio_lake_net
+
+  spark-worker-2:
+    build: .
+    container_name: spark-worker-2
+    environment:
+      - SPARK_NO_DAEMONIZE=true
+      - SPARK_WORKER_CORES=3
+      - SPARK_WORKER_MEMORY=4G
+    command: /opt/spark/bin/spark-class org.apache.spark.deploy.worker.Worker spark://spark-master:7077
+    depends_on:
+      - spark-master
+    ports:
+      - "8083:8081"
+    volumes:
+      - ./conf/spark-defaults.conf:/opt/spark/conf/spark-defaults.conf
+    networks:
+      - minio_lake_net
+
+  spark-manager:
+    build:
+      context: ../spark-manager
+      dockerfile: Dockerfile
+    container_name: spark-manager
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./jars:/opt/spark/external-jars
+      - ../spark-manager/jobs:/opt/spark-manager/jobs
+      - ../spark-manager/frontend:/opt/spark-manager/frontend
+      - ../spark-manager/backend:/opt/spark-manager/backend
+    depends_on:
+      - spark-master
+    networks:
+      - minio_lake_net
+
+networks:
+  minio_lake_net:
+    external: true

@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spark Orion | Submission Portal</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600&family=JetBrains+Mono&display=swap"
+        rel="stylesheet">
+</head>
+
+<body>
+    <div class="app-container">
+        <aside class="sidebar">
+            <div class="logo">
+                <span class="logo-icon">✨</span>
+                <h1>Spark Orion</h1>
+            </div>
+            <div class="job-list-container">
+                <h3>Job History</h3>
+                <ul id="job-list">
+                    <!-- Jobs will be injected here -->
+                </ul>
+            </div>
+            <div class="status-footer">
+                <div class="status-indicator">
+                    <span class="dot"></span>
+                    <span>Systems Online</span>
+                </div>
+            </div>
+        </aside>
+
+        <main class="notebook-section">
+            <header class="notebook-header">
+                <div class="header-info">
+                    <h2>Spark Orion Notebook</h2>
+                    <p>Submitting to spark://spark-master:7077</p>
+                </div>
+                <div class="notebook-controls">
+                    <button id="add-cell-btn" class="btn-secondary">
+                        <span>Add Cell</span>
+                        <span>➕</span>
+                    </button>
+                    <button id="run-all-btn" class="btn-primary">
+                        <span>Run All</span>
+                        <span>🚀</span>
+                    </button>
+                </div>
+            </header>
+
+            <div id="notebook-workspace" class="notebook-workspace">
+                <!-- Cells will be dynamically injected here -->
+            </div>
+        </main>
+    </div>
+    <script src="main.js"></script>
+</body>
+
+</html>

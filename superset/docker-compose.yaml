@@ -1,0 +1,43 @@
+services:  
+
+  superset-db:
+    image: postgres:15
+    container_name: superset-db
+    restart: always
+    environment:
+      POSTGRES_USER: superset
+      POSTGRES_PASSWORD: superset_password
+      POSTGRES_DB: superset
+    volumes:
+      - superset_db_home:/var/lib/postgresql/data
+    networks:
+      - minio_lake_net
+  
+  superset-cache:
+    image: redis:7
+    container_name: superset-cache
+    restart: always
+    networks:
+      - minio_lake_net
+
+  superset:
+    build: .
+    container_name: superset
+    ports:
+      - "8088:8088"
+    environment:
+      ADMIN_USERNAME: admin
+      ADMIN_EMAIL: admin@superset.com
+      ADMIN_PASSWORD: admin
+      SUPERSET_SECRET_KEY: "CHANGE_ME_TO_A_COMPLEX_RANDOM_SECRET"
+      SQLALCHEMY_DATABASE_URI: "postgresql://superset:superset_password@superset-db:5432/superset"
+      TALISMAN_ENABLED: "False"
+    networks:
+      - minio_lake_net
+
+networks:
+  minio_lake_net:
+    external: true
+
+volumes:
+  superset_db_home:

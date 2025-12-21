@@ -1,0 +1,25 @@
+services:
+  trino:
+    image: trinodb/trino:435
+    container_name: trino
+    ports:
+      - "8085:8080"
+    volumes:
+      - ./etc:/etc/trino
+    networks:
+      - minio_lake_net
+
+  trino-init:
+    image: trinodb/trino:435
+    container_name: trino-init
+    volumes:
+      - ./trino-init.sh:/tmp/trino-init.sh
+    entrypoint: /bin/bash /tmp/trino-init.sh
+    depends_on:
+      - trino
+    networks:
+      - minio_lake_net
+
+networks:
+  minio_lake_net:
+    external: true

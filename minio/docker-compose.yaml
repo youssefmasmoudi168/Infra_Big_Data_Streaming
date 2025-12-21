@@ -1,0 +1,76 @@
+services: 
+ 
+  minio1:
+    image: minio/minio:latest
+    container_name: minio1
+    volumes:
+      - minio1_data:/data
+    environment:
+      MINIO_ROOT_USER: minioadmin
+      MINIO_ROOT_PASSWORD: minioadmin
+    command: server http://minio{1...4}/data --console-address ":9001"
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    networks:
+      - lake_net
+
+  minio2:
+    image: minio/minio:latest
+    container_name: minio2
+    volumes:
+      - minio2_data:/data
+    environment:
+      MINIO_ROOT_USER: minioadmin
+      MINIO_ROOT_PASSWORD: minioadmin
+    command: server http://minio{1...4}/data --console-address ":9001"
+    networks:
+      - lake_net
+
+  minio3:
+    image: minio/minio:latest
+    container_name: minio3
+    volumes:
+      - minio3_data:/data
+    environment:
+      MINIO_ROOT_USER: minioadmin
+      MINIO_ROOT_PASSWORD: minioadmin
+    command: server http://minio{1...4}/data --console-address ":9001"
+    networks:
+      - lake_net
+
+  minio4:
+    image: minio/minio:latest
+    container_name: minio4
+    volumes:
+      - minio4_data:/data
+    environment:
+      MINIO_ROOT_USER: minioadmin
+      MINIO_ROOT_PASSWORD: minioadmin
+    command: server http://minio{1...4}/data --console-address ":9001"
+    networks:
+      - lake_net
+  mc:
+    image: minio/mc
+    depends_on:
+      - minio1
+    entrypoint: >
+      sh -c "
+      sleep 5;
+      mc alias set local http://minio1:9000 minioadmin minioadmin;
+      mc mb local/delta;
+      mc mb local/lakehouse;
+      mc mb local/checkpoints;
+      "
+    networks:
+      - lake_net
+
+volumes:
+  minio1_data:
+  minio2_data:
+  minio3_data:
+  minio4_data:
+
+networks:
+  lake_net:
+    driver: bridge

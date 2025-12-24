@@ -12,11 +12,10 @@ producer = KafkaProducer(
     value_serializer=lambda v: json.dumps(v).encode('utf-8')
 )
 
-# Stream each row to Kafka
-for _, row in df.iterrows():
+for counter, (_, row) in enumerate(df.iterrows(), start=1):
     event = row.to_dict()
     producer.send("logistics-events", event)
-    print("Sent:", event)
-    time.sleep(180)  # simulate 1-second delay between messages
+    print(f"{counter}")
+    time.sleep(2)
 
 producer.close()
